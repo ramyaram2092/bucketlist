@@ -1,10 +1,10 @@
 
-import { StyleSheet, Text, View, ImageBackground, Button, FlatList,Linking } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, Button, FlatList, Linking } from 'react-native';
 import homepic from '../assets/home_2.jpg'
 import React, { useEffect, useState } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, query, where, orderBy } from "firebase/firestore";
+import { collection , getDocs,query, where } from "firebase/firestore";
 
 
 //firebase config 
@@ -25,18 +25,21 @@ export function Dashboard(props) {
     // use states
     const [month, setMonth] = useState()
     const [year, setYear] = useState()
-    const[user,setuser]=useState('')
+    const [email, setemail] = useState()
+    const [name, setname] = useState()
+
     const [userdataM, setuserdataM] = useState([])
     const [userdataY, setuserdataY] = useState([])
-    const[restaurantsM,setrestaurantsM]=useState([])
-    const[restaurantsY,setrestaurantsY]=useState([])
+    const [restaurantsM, setrestaurantsM] = useState([])
+    const [restaurantsY, setrestaurantsY] = useState([])
 
 
 
     //use effect
     useEffect(() => {
-        console.log("Name:"+props.route.params.name)
-        setuser(props.route.params.name)
+        setemail(props.route.params.user.email)
+        setname(props.route.params.user.name)
+        console.log("************"+email+"***********"+name)
         const d = new Date();
         let m = d.getMonth() + 1;
         let y = d.getFullYear();
@@ -45,28 +48,28 @@ export function Dashboard(props) {
     }, []);
 
     useEffect(() => {
-        (async()=>{
-            let udata= await getData("M","D")
-            if(udata.length!=0)
+        (async () => {
+            let udata = await getData("M", "D")
+            if (udata.length != 0)
                 setuserdataM([...udata])
-            let rdata= await getData("M","R")
-            if(rdata.length!=0)
+            let rdata = await getData("M", "R")
+            if (rdata.length != 0)
                 setrestaurantsM([...rdata])
-            
-    })()
-    }, [month]);
+
+        })()
+    }, []);
 
     useEffect(() => {
-        (async()=>{
-            let udata=await getData("Y","D")
-            if(udata.length!=0)
+        (async () => {
+            let udata = await getData("Y", "D")
+            if (udata.length != 0)
                 setuserdataY([...udata])
-            let rdata= await getData("Y","R")
-            if(rdata.length!=0)
+            let rdata = await getData("Y", "R")
+            if (rdata.length != 0)
                 setrestaurantsY([...rdata])
 
         })()
-    }, [year]);
+    }, []);
 
 
     //functions
@@ -88,17 +91,19 @@ export function Dashboard(props) {
     }
 
 
-    const getData = async (goaltype,category) => {
+    const getData = async (goaltype, category) => {
         const docRef = collection(db, "goals");
         const goalTime = goaltype == "M" ? month : year.toString()
-        console.log("goalTime:"+goalTime +"goalType:"+goaltype+"category:"+category)
+        console.log("goalTime:" + goalTime + "goalType:" + goaltype + "category:" + category)
         if (goalTime != null) {
-            const queryString = query(docRef, where("date", "==", goalTime), where("goaltype", "==", goaltype),where("category", "==", category))
-            const docSnap = await getDocs(queryString);
+            const queryString = query(docRef, where("date", "==", goalTime), where("goaltype", "==", goaltype), where("category", "==", category), where("id", "==", email))
+            const docSnap = await getDocs(queryString)
+            console.log("No of records for "+email+" of goal type "+goaltype+" and category "+category+" is "+docSnap.size)
+
             let goalArray = []
             docSnap.forEach((doc) => {
                 let goalObject = {
-                    id:   doc.data().id,
+                    id: doc.data().id,
                     date: doc.data().date,
                     todo: doc.data().todo,
                     name: doc.data().name,
@@ -114,18 +119,29 @@ export function Dashboard(props) {
     return (
         <View style={styles.home}>
             <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
-                <Text style={styles.text}> Hey  {user} Welcome Back </Text>
-                <Text style={styles.text}> This Month : {month} </Text>
-                <Text style={styles.text1}> Places to visit </Text>
+                <Text style={styles.header1}> Hello {name} !! </Text>
+                <Text style={styles.header1}> Welcome Back </Text>
+
+                <View style={styles.header2Container}>
+                    <Text style={styles.header2}> {month} Goals </Text>
+                    <Button style={styles.button}
+                        title="View All/Edit"
+                        onPress={() => props.navigation.navigate('MonthlyGoals',{'email':email}) }
+                    />
+                    </View>
+                    <Text style={styles.text1}> Places to visit </Text>
+                
+
+
                 {
                     userdataM &&
                     <FlatList
                         contentContainerStyle={styles.flatlist}
                         data={userdataM}
-                        renderItem={({ item }) => 
+                        renderItem={({ item }) =>
                             <GoalsPanel
                                 {...item}
-                            /> 
+                            />
                         }
                         keyExtractor={(item, index) => index.toString()}
                     />
@@ -136,15 +152,21 @@ export function Dashboard(props) {
                     <FlatList
                         contentContainerStyle={styles.flatlist}
                         data={restaurantsM}
-                        renderItem={({ item }) => 
+                        renderItem={({ item }) =>
                             <GoalsPanel
                                 {...item}
-                            /> 
+                            />
                         }
                         keyExtractor={(item, index) => index.toString()}
                     />
                 }
-                <Text style={styles.text}> This year : {year} </Text>
+                <View style={styles.header2Container}>
+                    <Text style={styles.header2}> {year} Goals </Text>
+                    <Button style={styles.button}
+                        title="View All/Edit"
+                        onPress={() =>  props.navigation.navigate('YearlyGoals',{'email':email})}
+                    />
+                    </View>
 
                 <Text style={styles.text1}> Places to visit </Text>
                 {
@@ -152,10 +174,10 @@ export function Dashboard(props) {
                     <FlatList
                         contentContainerStyle={styles.flatlist}
                         data={userdataY}
-                        renderItem={({ item }) => 
+                        renderItem={({ item }) =>
                             <GoalsPanel
                                 {...item}
-                             /> 
+                            />
                         }
                         keyExtractor={(item, index) => index.toString()}
                     />
@@ -166,10 +188,10 @@ export function Dashboard(props) {
                     <FlatList
                         contentContainerStyle={styles.flatlist}
                         data={restaurantsY}
-                        renderItem={({ item }) => 
+                        renderItem={({ item }) =>
                             <GoalsPanel
                                 {...item}
-                             /> 
+                            />
                         }
                         keyExtractor={(item, index) => index.toString()}
                     />
@@ -189,10 +211,7 @@ function GoalsPanel(props) {
             <View style={styles.text1}>
                 <Display todo={props.todo} />
             </View>
-            <Button
-                title="Edit"
-                onPress={() => { }}
-            />
+
         </View>
     )
 }
@@ -215,63 +234,91 @@ const styles = StyleSheet.create({
     text: {
         color: "white",
         fontSize: 20,
-        lineHeight: 64,
+        lineHeight: 34,
         fontWeight: "bold",
         textAlign: "top",
         justifyContent: "center",
 
         // flex: 6,
         // flexDirection: 'column',
-        // justifyContent: 'flex-start',
-        // alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
         // flexWrap: 'wrap',
         // padding: 3,
         // marginVertical: 5,  
-      },
+    },
     text1: {
         color: "white",
-        fontSize: 15,
+        fontSize: 18,
         lineHeight: 34,
-        justifyContent: "center",
+        justifyContent: "left",
 
-        textAlign: "center",
+        textAlign: "left",
         // backgroundColor: "#000000c0",
     },
     home: {
+
         flex: 1,
         // justifyContent: 'space-between',
         // alignItems: 'center',
         justifyContent: 'center',
+
     },
-    header: {
+    header1: {
+        lineHeight: 34,
+        fontSize: 25,
+        color: "white",
+        fontWeight: 'bold',
+        justifyContent: "center",
+        textAlign: "center",
+
+
+    },
+
+    header2Container: {
+        flexDirection:"row",
+        justifyContent: 'flex-start',
+        color: 'gray',
+        width: '80%',
+        marginTop: 5,
+                
+    },
+
+    header2: {
+        flex:1,
+        lineHeight: 34,
         fontSize: 20,
+        color: "white",
         fontWeight: 'bold',
     },
+
+
     button: {
-        flex: 1,
-        padding: 3,
-        margin: 5,
-        fontcolor: "black",
-        backgroundColor: "#000000c0",
+        // flex: 1,
+        // padding: 3,
+        // margin: 5,
+        // fontSize: 10,
+        // fontcolor: "black",
+        // backgroundColor: "#000000c0",
 
     },
     flatlist: {
         width: "80%",
         // backgroundColor:'pink',
-        alignItems: 'center',
+        alignItems: 'left',
 
     },
-   panelAdd:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '65%',
-    // borderWidth: 1,
-    borderColor: 'white',
-    // borderRadius: 1,
-    padding: 3,
-    marginVertical: 5,
-    marginHorizontal: 0,
+    panelAdd: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '65%',
+        // borderWidth: 1,
+        borderColor: 'white',
+        // borderRadius: 1,
+        padding: 3,
+        marginVertical: 5,
+        marginHorizontal: 0,
     }
 
 
