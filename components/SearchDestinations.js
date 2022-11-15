@@ -1,22 +1,22 @@
-import { StyleSheet, View, TextInput, Button, Text, ImageBackground } from 'react-native';
+import { StyleSheet, View,  Button,  ImageBackground } from 'react-native';
 import homepic from '../assets/home_2.jpg'
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import HTML from 'react-native-render-html';
+// import { useNavigation } from '@react-navigation/native';
 
 
 
 const API_KEY = "AIzaSyBElDk09KbzVFf9HHiK_nTram7eEXSgl2U"
+// const navigation=useNavigation()
 
 
-
-export function SearchDestination() {
+export function SearchDestination(props) {
     const [place, setplace] = useState([])
     const [placedetails, setplacedetails] = useState([])
     const [contents, setContents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState();
-
 
     //get place details : no proper details
     const searchPlaces = (searchplace) => {
@@ -139,14 +139,14 @@ export function SearchDestination() {
                     
                     </View>
                 </View>
-                <View>
+                {/* <View>
                     <Text styles={styles.text}>A description of the place comes here </Text>
-                </View>
+                </View> */}
                 <View>
                     <Button
                         style={styles.button}
                         title="Add to Monthly Goals"
-                        onPress={() => { }}
+                        onPress={() =>{ props.navigation.navigate('Monthly Goal')}}
                     />
                     <Button
                         style={styles.button}
