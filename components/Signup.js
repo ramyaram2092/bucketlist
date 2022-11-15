@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc,query,where,getDocs } from "firebase/firestore";
 
 
 //firebase config 
@@ -23,9 +23,9 @@ const db = getFirestore(app);
 
 export function Signup(props) {
     //state variables
-    const [dpname, setdpname] = useState()
-    const [email, setemail] = useState()
-    const [password, setpassword] = useState()
+    const [dpname, setdpname] = useState('')
+    const [email, setemail] = useState('')
+    const [password, setpassword] = useState('')
     const [isLoading, setisLoading] = useState(false)
 
     // register user function 
@@ -34,14 +34,23 @@ export function Signup(props) {
             Alert.alert('Enter details to signup!')
         }
         else {
-            setisLoading(true)
-            const docRef = await addDoc(collection(db, "userdetails"), {
+            const colRef = collection(db, "userdetails");
+            const queryString = query(colRef, where("email", "==", email))
+            const docSnap = await getDocs(queryString);
+            if (docSnap.length == 0) {
+                Alert.alert('email  already used!')
+            }
+            else {
 
-                displayname: dpname,
-                email: email,
-                password: password,
+                const docRef = await addDoc(collection(db, "userdetails"), {
 
-            });
+                    displayname: dpname,
+                    email: email,
+                    password: password,
+
+                });
+                setisLoading(true)
+            }
         }
     }
 
