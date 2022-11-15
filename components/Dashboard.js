@@ -35,7 +35,8 @@ export function Dashboard(props) {
 
     //use effect
     useEffect(() => {
-        // setuser(props.route.params.name)
+        console.log("Name:"+props.route.params.name)
+        setuser(props.route.params.name)
         const d = new Date();
         let m = d.getMonth() + 1;
         let y = d.getFullYear();
@@ -113,7 +114,7 @@ export function Dashboard(props) {
     return (
         <View style={styles.home}>
             <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
-                <Text style={styles.text}> Hey there {user} Welcome Back </Text>
+                <Text style={styles.text}> Hey  {user} Welcome Back </Text>
                 <Text style={styles.text}> This Month : {month} </Text>
                 <Text style={styles.text1}> Places to visit </Text>
                 {

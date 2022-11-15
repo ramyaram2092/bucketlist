@@ -48,17 +48,18 @@ export function Login(props) {
                 Alert.alert('Invalid credentials!')
             }
             else {
-                setisLoading(true)
                 let newUserInfo = []
                 docSnap.forEach((doc) => {
                     let newUser = {
                         name: doc.data().displayname,
                         email: doc.data().email
                     }
-                    setdpname(newUser.name)
+                    setdpname( doc.data().displayname)
                     newUserInfo.push(newUser)
                 })
                 setUserInfo(newUserInfo)
+                setisLoading(true)
+
             }
         }
     }
@@ -68,7 +69,6 @@ export function Login(props) {
 
 
 useEffect(() => {
-    // console.log("Login screen : "+props.route.params.userdetails)
     if(props.route.params)
     {
         setemail(props.route.params.userdetails.email)
@@ -76,7 +76,9 @@ useEffect(() => {
     }
 
     if (isLoading) {
-        props.navigation.navigate('BListHome',{'name':dpname})
+        console.log("display name:"+ dpname)
+
+        props.navigation.navigate('Dashboard',{'name':dpname})
     }
 
 }, [isLoading])
