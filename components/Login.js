@@ -73,12 +73,16 @@ useEffect(() => {
     {
         setemail(props.route.params.userdetails.email)
         setpassword(props.route.params.userdetails.password)
+        
     }
 
     if (isLoading) {
-        console.log("display name:"+ dpname)
-
-        props.navigation.navigate('Dashboard',{'name':dpname})
+        console.log(email+":"+dpname)
+        let user = {
+            email: email,
+            name:dpname
+        }
+        props.navigation.navigate('Dashboard',{'user':user})
     }
 
 }, [isLoading])
