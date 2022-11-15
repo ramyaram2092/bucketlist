@@ -31,14 +31,14 @@ export function Signup(props) {
     // register user function 
     const registeruser = async () => {
         if (email === '' || password === '' || dpname === '') {
-            Alert.alert('Enter details to signup!')
+            Alert.alert('Enter details to Signup!')
         }
         else {
             const colRef = collection(db, "userdetails");
             const queryString = query(colRef, where("email", "==", email))
             const docSnap = await getDocs(queryString);
-            if (docSnap.length == 0) {
-                Alert.alert('email  already used!')
+            if (docSnap.size >= 1) {
+                Alert.alert('Email already used!')
             }
             else {
 
@@ -56,8 +56,12 @@ export function Signup(props) {
 
     //use effect : 
     useEffect(() => {
+        let newUser = {
+            email: email,
+            password:password
+        }
         if (isLoading) {
-            props.navigation.navigate('Login')
+            props.navigation.navigate('Login',{'userdetails':newUser})
         }
 
     }, [isLoading])

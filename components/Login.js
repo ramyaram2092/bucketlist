@@ -31,12 +31,14 @@ export function Login(props) {
     const [password, setpassword] = useState('')
     const [isLoading, setisLoading] = useState(false)
     const [userInfo, setUserInfo] = useState([])
+    const [dpname, setdpname] = useState('')
+
 
 
     // register user function 
     const userlogin = async () => {
         if (email === '' ||password === '') {
-            Alert.alert('Enter Login details!')
+            Alert.alert(' Enter all details!')
         }
         else {
             const colRef = collection(db, "userdetails");
@@ -53,6 +55,7 @@ export function Login(props) {
                         name: doc.data().displayname,
                         email: doc.data().email
                     }
+                    setdpname(newUser.name)
                     newUserInfo.push(newUser)
                 })
                 setUserInfo(newUserInfo)
@@ -65,8 +68,15 @@ export function Login(props) {
 
 
 useEffect(() => {
+    // console.log("Login screen : "+props.route.params.userdetails)
+    if(props.route.params)
+    {
+        setemail(props.route.params.userdetails.email)
+        setpassword(props.route.params.userdetails.password)
+    }
+
     if (isLoading) {
-        props.navigation.navigate('Dashboard')
+        props.navigation.navigate('BListHome',{'name':dpname})
     }
 
 }, [isLoading])
