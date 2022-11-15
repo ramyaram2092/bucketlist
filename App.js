@@ -1,70 +1,92 @@
+import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
-import {Home} from './components/Home.js'
-import {Destination} from './components/Destinations.js'
-import {Restaurants} from './components/Restaurants.js' 
-// import { SearchDestination } from './components/SearchDestinations.js'
-// import { MonthlyGoals } from './components/MonthlyGoals.js'
-// import { YearlyGoals } from './components/YearlyGoals.js'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Login } from './components/Login.js';
+import { Signup } from './components/Signup.js';
+import { Dashboard } from './components/Dashboard.js';
+import { SearchDestination } from './components/SearchDestinations.js'
+import { MonthlyGoals } from './components/MonthlyGoals.js'
+import { YearlyGoals } from './components/YearlyGoals.js'
 
 
-
-
-
-const Tab = createBottomTabNavigator();
-// const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
- 
   return (
-   
     <NavigationContainer>
-      <Tab.Navigator initialRoute="Home">
-        <Tab.Screen
-          name="My BLists"
-          component={Home}
+      <Stack.Navigator
+        initialRouteName="Signup"
+        screenOptions={{
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#3740FE',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}>
+        <Stack.Screen
+          name="Signup"
+          component={Signup}
+          options={{ title: 'Signup' }}
         />
-        <Tab.Screen
-          name="My Destinations"
-          component={Destination}
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{
+            title: 'Login',
+            headerLeft: null
+          }}
+
         />
-        <Tab.Screen
-          name="My Restaurants"
+
+        <Stack.Screen
+          name="Dashboard"
+          component={Dashboard}
+          options={{ title: 'My Bucket List' }}
+        />
+        {/* <Stack.Screen
+          name="Destinations"
+          component={Destinations}
+          options={{
+            title: 'My Destinations',
+            headerLeft: null
+          }}
+
+        />
+        <Stack.Screen
+          name="Restaurants"
           component={Restaurants}
+          options={{
+            title: 'My Restaurants',
+            headerLeft: null
+          }
+          } /> */}
+          <Stack.Screen
+          name="SearchDestinations"
+          component={SearchDestination}
+          options={{ title: 'My Destinations' }}
         />
-      </Tab.Navigator>
-     </NavigationContainer>
+        <Stack.Screen
+          name="MonthlyGoals"
+          component={MonthlyGoals}
+          options={{
+            title: 'My Monthly Goals',
+            headerLeft: null
+          }}
 
-  )
+        />
+        <Stack.Screen
+          name="YearlyGoals"
+          component={YearlyGoals}
+          options={{
+            title: 'My Yearly Goals',
+            headerLeft: null
+          }
+          }
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
-
-
-
-// function Destination() {
-//     return (
-//           // <NavigationContainer>
-//             <Stack.Navigator initialRoute="Search">
-//                 <Stack.Screen
-//                     name="Search"
-//                     component={SearchDestination}
-//                 />
-//                 <Stack.Screen
-//                     name="Monthly "
-//                     component={MonthlyGoals}
-//                 />
-//                 <Stack.Screen
-//                     name="Yearly "
-//                     component={YearlyGoals}
-//                 />
-//             </Stack.Navigator>
-//                 // </NavigationContainer>
-
-
-
-//     )
-
-// }
-
-
