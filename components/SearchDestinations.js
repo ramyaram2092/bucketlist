@@ -3,7 +3,6 @@ import homepic from '../assets/home_2.jpg'
 import React, {  useState } from 'react';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import HTML from 'react-native-render-html';
-// import { useNavigation } from '@react-navigation/native';
 
 
 
