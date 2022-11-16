@@ -6,7 +6,7 @@ import homepic from '../assets/home_2.jpg'
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { collection,addDoc,query,where,getDocs } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 
 
 
@@ -29,27 +29,43 @@ const API_KEY = "AIzaSyBElDk09KbzVFf9HHiK_nTram7eEXSgl2U"
 
 export function YearlyGoals(props) {
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState();
+    const [value, setValue] = useState('2022');
+    const [open1, setOpen1] = useState(false);
+    const [value1, setValue1] = useState('2022');
     const [items, setItems] = useState([
-      {label: '2022', value: '2022'},
-      {label: '2023', value: '2023'},
-      {label: '2024', value: '2024'},
-      {label: '2025', value: '2025'},
-      {label: '2026', value: '2026'},
-      {label: '2027', value: '2027'},
-      {label: '2028', value: '2028'},
-      {label: '2029', value: '2029'},
-      {label: '2030', value: '2030'},
-      {label: '2031', value: '2031'},
-      {label: '2032', value: '2032'},
+        { label: '2022', value: '2022' },
+        { label: '2023', value: '2023' },
+        { label: '2024', value: '2024' },
+        { label: '2025', value: '2025' },
+        { label: '2026', value: '2026' },
+        { label: '2027', value: '2027' },
+        { label: '2028', value: '2028' },
+        { label: '2029', value: '2029' },
+        { label: '2030', value: '2030' },
+        { label: '2031', value: '2031' },
+        { label: '2032', value: '2032' },
+
+    ]);
+    const [items1, setItems1] = useState([
+        { label: '2022', value: '2022' },
+        { label: '2023', value: '2023' },
+        { label: '2024', value: '2024' },
+        { label: '2025', value: '2025' },
+        { label: '2026', value: '2026' },
+        { label: '2027', value: '2027' },
+        { label: '2028', value: '2028' },
+        { label: '2029', value: '2029' },
+        { label: '2030', value: '2030' },
+        { label: '2031', value: '2031' },
+        { label: '2032', value: '2032' },
 
     ]);
     const [placeid, setplaceid] = useState()
-    const [placename,setplacename]=useState()
-    const [category,setcategory]=useState()
-    const [email,setemail]=useState()
+    const [placename, setplacename] = useState()
+    const [category, setcategory] = useState()
+    const [email, setemail] = useState()
 
-    const [years,setyears]=useState()
+    const [years, setyears] = useState()
     const [placedetails, setplacedetails] = useState([])
     const [contents, setContents] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -72,7 +88,7 @@ export function YearlyGoals(props) {
         //     allYears.push(yr)
         // }
         // setyears[allYears]
-    
+
     }, []);
 
     useEffect(() => {
@@ -82,9 +98,18 @@ export function YearlyGoals(props) {
                 setuserdataM([...udata])
         })()
 
-    }, [value]);
+    }, [value1]);
+    useEffect(() => {
+        (async () => {
+            let udata = await getData()
+            if (udata.length != 0)
+                setuserdataM([...udata])
+        })()
 
-    
+    }, []);
+
+
+
 
     /**********************************GOOGLE API********************************************/
     //get place details : no proper details
@@ -97,7 +122,7 @@ export function YearlyGoals(props) {
             .then(response => response.json())
             .then(results => {
                 let placedetails = results
-                console.log("PLACEDETAILS:" + placedetails.result.name)
+                // console.log("PLACEDETAILS:" + placedetails.result.name)
                 let sp = placedetails.result.name;
 
                 setplacename(sp)
@@ -135,20 +160,20 @@ export function YearlyGoals(props) {
     /****************************************FIREBASE********************************************/
 
     //save the goal in database 
-    const saveData = async()=>{
+    const saveData = async () => {
         // W11C2A1 TODO: save data to firestore0
         const docRef = await addDoc(collection(db, "goals"), {
-          
-              category:category,
-              date:value,
-              goaltype:"Y",
-              id:props.route.params.data.email,
-              todo:placename
-      });
-      }
-      const getData = async () => {
+
+            category: category,
+            date: value,
+            goaltype: "Y",
+            id: props.route.params.data.email,
+            todo: placename
+        });
+    }
+    const getData = async () => {
         const docRef = collection(db, "goals");
-        const queryString = query(docRef, where("date", "==", value), where("goaltype", "==", "Y"), where("category", "==", category),where("id", "==", email))
+        const queryString = query(docRef, where("date", "==", value1), where("goaltype", "==", "Y"), where("category", "==", category), where("id", "==", email))
         const docSnap = await getDocs(queryString)
         // console.log("No of records for " + email + " of goal type " + goaltype + " and category " + category + " is " + docSnap.size)
 
@@ -171,6 +196,7 @@ export function YearlyGoals(props) {
     return (
         <View style={styles.container}>
             <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
+                <Text style={styles.header1}> Add Goals </Text>
                 <View style={styles.SearchDestination}>
                     <GooglePlacesAutocomplete
                         placeholder='Search'
@@ -190,13 +216,12 @@ export function YearlyGoals(props) {
                         onPress={() => searchPlaces(placeid)}
                     />
                     <View>
-                    {/* <HTML source={{ html: contents }} /> */}
+                        {/* <HTML source={{ html: contents }} /> */}
 
-                    
                     </View>
                 </View>
-              
-                <View>
+
+                
                     <DropDownPicker
                         open={open}
                         value={value}
@@ -205,57 +230,47 @@ export function YearlyGoals(props) {
                         setValue={setValue}
                         setItems={setItems}
 
-                        // theme="DARK"
-                        // multiple={false}
-                        // mode="BADGE"
-                        // badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                     />
                     <Button
-                        title="Add to your Yearly goal "
-                        onPress={() => { 
-                            console.log("Place to add:"+placename)
-                            console.log("Year to add :"+value) 
+                        title="Add "
+                        onPress={() => {
                             saveData()
                         }
                         } />
+                    <Text style={styles.header1}></Text>
+                    <Text style={styles.header1}></Text>
+                    <Text style={styles.header1}></Text>
+                    <Text style={styles.header1}></Text>
+                    <Text style={styles.header1}></Text>
+                    <Text style={styles.header1}></Text>
+                    <Text style={styles.header1}></Text>
+                    <Text style={styles.header1}></Text>
+                    <Text style={styles.header1}></Text>
+                    <Text style={styles.header1}></Text>
 
-                        <Text style={styles.header1}> Select the month to view your goals </Text>
-                        <DropDownPicker
-                        open={open}
-                        value={value}
-                        items={items}
-                        setOpen={setOpen}
-                        setValue={setValue}
-                        setItems={setItems}
-
-                        // theme="DARK"
-                        // multiple={true}
-                        // mode="BADGE"
-                        // badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                    <Text style={styles.header1}> View  goals </Text>
+                    <DropDownPicker
+                        open={open1}
+                        value={value1}
+                        items={items1}
+                        setOpen={setOpen1}
+                        setValue={setValue1}
+                        setItems={setItems1}
                     />
 
-{
-                    userdataM &&
-                    <FlatList
-                        contentContainerStyle={styles.flatlist}
-                        data={userdataM}
-                        renderItem={({ item }) =>
-                            <GoalsPanel
-                                {...item}
-                            />
-                        }
-                        keyExtractor={(item, index) => index.toString()}
-                    />
-                }
-
-
-                </View>
-
-
-
-
-
-
+                    {
+                        userdataM &&
+                        <FlatList
+                            contentContainerStyle={styles.flatlist}
+                            data={userdataM}
+                            renderItem={({ item }) =>
+                                <GoalsPanel
+                                    {...item}
+                                />
+                            }
+                            keyExtractor={(item, index) => index.toString()}
+                        />
+                    }
             </ImageBackground>
         </View>
 
@@ -264,11 +279,8 @@ export function YearlyGoals(props) {
 
 function GoalsPanel(props) {
     return (
-        <View style={styles.panelAdd}>
-            <View style={styles.text1}>
-                <Display todo={props.todo} />
-            </View>
-
+        <View style={styles.flatlist}>
+            <Display todo={props.todo} />
         </View>
     )
 }
@@ -279,6 +291,9 @@ function Display(props) {
         <Text style={styles.status}>{props.todo}</Text>
     )
 }
+
+
+
 
 const styles = StyleSheet.create({
     container: {
@@ -304,20 +319,29 @@ const styles = StyleSheet.create({
         backgroundColor: "#000000c0",
     },
     destinations: {
-        flex: 1,
-        backgroundColor: '#E3112A',
-        flexDirection: 'row',
+        flexDirection: "col",
         justifyContent: 'space-between',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
+        alignItems: 'top',
+        color: 'gray',
+        width: '80%',
+        marginTop: 5,
+        marginBottom: 5,
     },
     SearchDestination: {
         flexDirection: "row",
         justifyContent: 'space-between',
         alignItems: 'top',
         color: 'gray',
-        width: '80%',
+        width: '70%',
+        marginTop: 5,
+        marginBottom: 5,
+    },
+    SearchDestination1: {
+        flexDirection: "row",
+        justifyContent: 'space-between',
+        alignItems: 'top',
+        color: 'gray',
+        width: '52%',
         marginTop: 5,
         marginBottom: 5,
     },
@@ -337,11 +361,30 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: "white",
         fontWeight: 'bold',
-        justifyContent: "center",
-        textAlign: "center",
-
 
     },
+    subheader: {
+        lineHeight: 34,
+        fontSize: 15,
+        color: "white",
+        fontWeight: 'bold',
+
+    },
+    goallist: {
+        lineHeight: 34,
+
+    },
+    flatlist: {
+        width: "80%",
+        // backgroundColor:'pink',
+        alignItems: 'left',
+
+    },
+    status: {
+        lineHeight: 34,
+        fontSize: 15,
+        color: "white",
+    }
 
 });
 

@@ -30,7 +30,23 @@ const API_KEY = "AIzaSyBElDk09KbzVFf9HHiK_nTram7eEXSgl2U"
 export function MonthlyGoals(props) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState('January');
+    const [open1, setOpen1] = useState(false);
+    const [value1, setValue1] = useState('November');
     const [items, setItems] = useState([
+        { label: 'January', value: 'January' },
+        { label: 'February', value: 'February' },
+        { label: 'March', value: 'March' },
+        { label: 'April', value: 'April' },
+        { label: 'May', value: 'May' },
+        { label: 'June', value: 'June' },
+        { label: 'July', value: 'July' },
+        { label: 'September', value: 'September' },
+        { label: 'October', value: 'October' },
+        { label: 'November', value: 'November' },
+        { label: 'December', value: 'December' },
+
+    ]);
+    const [items1, setItems1] = useState([
         { label: 'January', value: 'January' },
         { label: 'February', value: 'February' },
         { label: 'March', value: 'March' },
@@ -47,21 +63,21 @@ export function MonthlyGoals(props) {
     const [placeid, setplaceid] = useState()
     const [placename, setplacename] = useState()
     const [category, setcategory] = useState()
-    const [email,setemail]=useState()
+    const [email, setemail] = useState()
 
-    const [placedetails, setplacedetails] = useState([])
-    const [contents, setContents] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState();
+    // const [placedetails, setplacedetails] = useState([])
+    // const [contents, setContents] = useState([]);
+    // const [loading, setLoading] = useState(false);
+    // const [error, setError] = useState();
     const [userdataM, setuserdataM] = useState([])
 
 
-    useEffect(()=>{
+    useEffect(() => {
         setcategory(props.route.params.data.category)
         setemail(props.route.params.data.email)
 
 
-    },[])
+    }, [])
 
     useEffect(() => {
         (async () => {
@@ -70,7 +86,15 @@ export function MonthlyGoals(props) {
                 setuserdataM([...udata])
         })()
 
-    }, [value]);
+    }, []);
+    useEffect(() => {
+        (async () => {
+            let udata = await getData()
+            if (udata.length != 0)
+                setuserdataM([...udata])
+        })()
+
+    }, [value1]);
     /**********************************GOOGLE API********************************************/
     //get place details : no proper details
     const searchPlaces = (searchplace) => {
@@ -82,7 +106,7 @@ export function MonthlyGoals(props) {
             .then(response => response.json())
             .then(results => {
                 let placedetails = results
-                console.log("PLACEDETAILS:" + placedetails.result.name)
+                // console.log("PLACEDETAILS:" + placedetails.result.name)
                 let sp = placedetails.result.name;
 
                 setplacename(sp)
@@ -134,10 +158,9 @@ export function MonthlyGoals(props) {
 
     const getData = async () => {
         const docRef = collection(db, "goals");
-        const queryString = query(docRef, where("date", "==", value), where("goaltype", "==", "M"), where("category", "==", category),where("id", "==", email))
+        const queryString = query(docRef, where("date", "==", value1), where("goaltype", "==", "M"), where("category", "==", category), where("id", "==", email))
         const docSnap = await getDocs(queryString)
-        // console.log("No of records for " + email + " of goal type " + goaltype + " and category " + category + " is " + docSnap.size)
-
+        console.log("Data size" + docSnap.size)
         let goalArray = []
         docSnap.forEach((doc) => {
             let goalObject = {
@@ -157,6 +180,7 @@ export function MonthlyGoals(props) {
     return (
         <View style={styles.container}>
             <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
+                <Text style={styles.header1}> Add Goals </Text>
                 <View style={styles.SearchDestination}>
                     <GooglePlacesAutocomplete
                         placeholder='Search'
@@ -177,51 +201,54 @@ export function MonthlyGoals(props) {
                     />
                     <View>
                         {/* <HTML source={{ html: contents }} /> */}
-
-
                     </View>
                 </View>
 
-                <View>
-                    <DropDownPicker
-                        open={open}
-                        value={value}
-                        items={items}
-                        setOpen={setOpen}
-                        setValue={setValue}
-                        setItems={setItems}
+                <DropDownPicker
+                    open={open}
+                    value={value}
+                    items={items}
+                    setOpen={setOpen}
+                    setValue={setValue}
+                    setItems={setItems}
+                />
+                <Button style={styles.button}
+                    title="Add "
+                    onPress={() => {
 
-                        // theme="DARK"
-                    // multiple={false}
-                    // mode="BADGE"
-                    // badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
-                    />
-                    <Button
-                        title="Add to your Monthly goal "
-                        onPress={() => {
-                            // console.log("Place to add:"+placename)
-                            // console.log("Month to add :"+value) 
-                            saveData()
-                        }
-                        } />
+                        saveData()
+                    }
+                    } />
 
-                    <Text style={styles.header1}> Select the month to view your goals </Text>
-                    <DropDownPicker
-                        open={open}
-                        value={value}
-                        items={items}
-                        setOpen={setOpen}
-                        setValue={setValue}
-                        setItems={setItems}
+                <Text style={styles.header1}></Text>
+                <Text style={styles.header1}></Text>
+                <Text style={styles.header1}></Text>
+                <Text style={styles.header1}></Text>
+                <Text style={styles.header1}></Text>
+                <Text style={styles.header1}></Text>
+                <Text style={styles.header1}></Text>
+                <Text style={styles.header1}></Text>
+                <Text style={styles.header1}></Text>
+                <Text style={styles.header1}></Text>
 
-                        // theme="DARK"
-                    // multiple={true}
-                    // mode="BADGE"
-                    // badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
-                    />
 
-                    {/* <Text> Data is pulled from the database and displayed here </Text> */}
-                    {
+                <Text style={styles.header1}> View  Goals </Text>
+                {/* <View style={styles.SearchDestination1}> */}
+
+                {/* <Text style={styles.subheader}> Select month </Text> */}
+                <DropDownPicker
+                    open={open1}
+                    value={value1}
+                    items={items1}
+                    setOpen={setOpen1}
+                    setValue={setValue1}
+                    setItems={setItems1}
+                />
+                {/* </View> */}
+
+
+                {/* <Text> Data is pulled from the database and displayed here </Text> */}
+                {
                     userdataM &&
                     <FlatList
                         contentContainerStyle={styles.flatlist}
@@ -234,7 +261,6 @@ export function MonthlyGoals(props) {
                         keyExtractor={(item, index) => index.toString()}
                     />
                 }
-                </View>
             </ImageBackground>
         </View>
 
@@ -243,11 +269,8 @@ export function MonthlyGoals(props) {
 
 function GoalsPanel(props) {
     return (
-        <View style={styles.panelAdd}>
-            <View style={styles.text1}>
-                <Display todo={props.todo} />
-            </View>
-
+        <View style={styles.flatlist}>
+            <Display todo={props.todo} />
         </View>
     )
 }
@@ -283,20 +306,29 @@ const styles = StyleSheet.create({
         backgroundColor: "#000000c0",
     },
     destinations: {
-        flex: 1,
-        backgroundColor: '#E3112A',
-        flexDirection: 'row',
+        flexDirection: "col",
         justifyContent: 'space-between',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: 1,
+        alignItems: 'top',
+        color: 'gray',
+        width: '80%',
+        marginTop: 5,
+        marginBottom: 5,
     },
     SearchDestination: {
         flexDirection: "row",
         justifyContent: 'space-between',
         alignItems: 'top',
         color: 'gray',
-        width: '80%',
+        width: '70%',
+        marginTop: 5,
+        marginBottom: 5,
+    },
+    SearchDestination1: {
+        flexDirection: "row",
+        justifyContent: 'space-between',
+        alignItems: 'top',
+        color: 'gray',
+        width: '52%',
         marginTop: 5,
         marginBottom: 5,
     },
@@ -316,11 +348,30 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: "white",
         fontWeight: 'bold',
-        justifyContent: "center",
-        textAlign: "center",
-
 
     },
+    subheader: {
+        lineHeight: 34,
+        fontSize: 15,
+        color: "white",
+        fontWeight: 'bold',
+
+    },
+    goallist: {
+        lineHeight: 34,
+
+    },
+    flatlist: {
+        width: "80%",
+        // backgroundColor:'pink',
+        alignItems: 'left',
+
+    },
+    status: {
+        lineHeight: 34,
+        fontSize: 15,
+        color: "white",
+    }
 
 });
 
