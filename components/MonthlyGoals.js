@@ -1,12 +1,12 @@
 
-import { StyleSheet, View, TextInput, Button, Text, ImageBackground } from 'react-native';
+import { StyleSheet, View, FlatList, Button, Text, ImageBackground } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import React, { useEffect, useState } from 'react';
 import homepic from '../assets/home_2.jpg'
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { collection,addDoc,query,where,getDocs } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 
 
 
@@ -29,29 +29,48 @@ const API_KEY = "AIzaSyBElDk09KbzVFf9HHiK_nTram7eEXSgl2U"
 
 export function MonthlyGoals(props) {
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState();
+    const [value, setValue] = useState('January');
     const [items, setItems] = useState([
-      {label: 'January', value: 'January'},
-      {label: 'February', value: 'February'},
-      {label: 'March', value: 'March'},
-      {label: 'April', value: 'April'},
-      {label: 'May', value: 'May'},
-      {label: 'June', value: 'June'},
-      {label: 'July', value: 'July'},
-      {label: 'September', value: 'September'},
-      {label: 'October', value: 'October'},
-      {label: 'November', value: 'November'},
-      {label: 'December', value: 'December'},
+        { label: 'January', value: 'January' },
+        { label: 'February', value: 'February' },
+        { label: 'March', value: 'March' },
+        { label: 'April', value: 'April' },
+        { label: 'May', value: 'May' },
+        { label: 'June', value: 'June' },
+        { label: 'July', value: 'July' },
+        { label: 'September', value: 'September' },
+        { label: 'October', value: 'October' },
+        { label: 'November', value: 'November' },
+        { label: 'December', value: 'December' },
 
     ]);
     const [placeid, setplaceid] = useState()
-    const[placename,setplacename]=useState()
+    const [placename, setplacename] = useState()
+    const [category, setcategory] = useState()
+    const [email,setemail]=useState()
+
     const [placedetails, setplacedetails] = useState([])
     const [contents, setContents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState();
+    const [userdataM, setuserdataM] = useState([])
 
 
+    useEffect(()=>{
+        setcategory(props.route.params.data.category)
+        setemail(props.route.params.data.email)
+
+
+    },[])
+
+    useEffect(() => {
+        (async () => {
+            let udata = await getData()
+            if (udata.length != 0)
+                setuserdataM([...udata])
+        })()
+
+    }, [value]);
     /**********************************GOOGLE API********************************************/
     //get place details : no proper details
     const searchPlaces = (searchplace) => {
@@ -101,17 +120,37 @@ export function MonthlyGoals(props) {
     /****************************************FIREBASE********************************************/
 
     //save the goal in database 
-    const saveData = async()=>{
+    const saveData = async () => {
         // W11C2A1 TODO: save data to firestore0
         const docRef = await addDoc(collection(db, "goals"), {
-          
-              category:"D",
-              date:value,
-              goaltype:"M",
-              id:props.route.params.email,
-              todo:placename
-      });
-      }
+
+            category: category,
+            date: value,
+            goaltype: "M",
+            id: props.route.params.data.email,
+            todo: placename
+        });
+    }
+
+    const getData = async () => {
+        const docRef = collection(db, "goals");
+        const queryString = query(docRef, where("date", "==", value), where("goaltype", "==", "M"), where("category", "==", category),where("id", "==", email))
+        const docSnap = await getDocs(queryString)
+        // console.log("No of records for " + email + " of goal type " + goaltype + " and category " + category + " is " + docSnap.size)
+
+        let goalArray = []
+        docSnap.forEach((doc) => {
+            let goalObject = {
+                id: doc.data().id,
+                date: doc.data().date,
+                todo: doc.data().todo,
+                name: doc.data().name,
+            }
+            goalArray.push(goalObject)
+        });
+        return goalArray;
+
+    }
 
 
 
@@ -137,12 +176,12 @@ export function MonthlyGoals(props) {
                         onPress={() => searchPlaces(placeid)}
                     />
                     <View>
-                    {/* <HTML source={{ html: contents }} /> */}
+                        {/* <HTML source={{ html: contents }} /> */}
 
-                    
+
                     </View>
                 </View>
-              
+
                 <View>
                     <DropDownPicker
                         open={open}
@@ -152,22 +191,22 @@ export function MonthlyGoals(props) {
                         setValue={setValue}
                         setItems={setItems}
 
-                        theme="DARK"
-                        // multiple={false}
-                        // mode="BADGE"
-                        // badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                        // theme="DARK"
+                    // multiple={false}
+                    // mode="BADGE"
+                    // badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                     />
                     <Button
                         title="Add to your Monthly goal "
-                        onPress={() => { 
-                            console.log("Place to add:"+placename)
-                            console.log("Month to add :"+value) 
+                        onPress={() => {
+                            // console.log("Place to add:"+placename)
+                            // console.log("Month to add :"+value) 
                             saveData()
                         }
                         } />
 
-                        <Text style={styles.header1}> Select the month to view your goals </Text>
-                        <DropDownPicker
+                    <Text style={styles.header1}> Select the month to view your goals </Text>
+                    <DropDownPicker
                         open={open}
                         value={value}
                         items={items}
@@ -175,25 +214,48 @@ export function MonthlyGoals(props) {
                         setValue={setValue}
                         setItems={setItems}
 
-                        theme="DARK"
-                        // multiple={true}
-                        // mode="BADGE"
-                        // badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+                        // theme="DARK"
+                    // multiple={true}
+                    // mode="BADGE"
+                    // badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
                     />
 
-                    <Text> Data is pulled from the database and displayed here </Text>
-
-
+                    {/* <Text> Data is pulled from the database and displayed here </Text> */}
+                    {
+                    userdataM &&
+                    <FlatList
+                        contentContainerStyle={styles.flatlist}
+                        data={userdataM}
+                        renderItem={({ item }) =>
+                            <GoalsPanel
+                                {...item}
+                            />
+                        }
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                }
                 </View>
-
-
-
-
-
-
             </ImageBackground>
         </View>
 
+    )
+}
+
+function GoalsPanel(props) {
+    return (
+        <View style={styles.panelAdd}>
+            <View style={styles.text1}>
+                <Display todo={props.todo} />
+            </View>
+
+        </View>
+    )
+}
+
+
+function Display(props) {
+    return (
+        <Text style={styles.status}>{props.todo}</Text>
     )
 }
 

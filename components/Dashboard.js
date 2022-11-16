@@ -4,7 +4,7 @@ import homepic from '../assets/home_2.jpg'
 import React, { useEffect, useState } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { collection , getDocs,query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 
 //firebase config 
@@ -39,7 +39,7 @@ export function Dashboard(props) {
     useEffect(() => {
         setemail(props.route.params.user.email)
         setname(props.route.params.user.name)
-        console.log("************"+email+"***********"+name)
+        console.log("************" + email + "***********" + name)
         const d = new Date();
         let m = d.getMonth() + 1;
         let y = d.getFullYear();
@@ -57,7 +57,7 @@ export function Dashboard(props) {
                 setrestaurantsM([...rdata])
 
         })()
-    }, []);
+    }, [month]);
 
     useEffect(() => {
         (async () => {
@@ -69,7 +69,7 @@ export function Dashboard(props) {
                 setrestaurantsY([...rdata])
 
         })()
-    }, []);
+    }, [year]);
 
 
     //functions
@@ -98,7 +98,7 @@ export function Dashboard(props) {
         if (goalTime != null) {
             const queryString = query(docRef, where("date", "==", goalTime), where("goaltype", "==", goaltype), where("category", "==", category), where("id", "==", email))
             const docSnap = await getDocs(queryString)
-            console.log("No of records for "+email+" of goal type "+goaltype+" and category "+category+" is "+docSnap.size)
+            console.log("No of records for " + email + " of goal type " + goaltype + " and category " + category + " is " + docSnap.size)
 
             let goalArray = []
             docSnap.forEach((doc) => {
@@ -121,16 +121,21 @@ export function Dashboard(props) {
             <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
                 <Text style={styles.header1}> Hello {name} !! </Text>
                 <Text style={styles.header1}> Welcome Back </Text>
-
+                <Text style={styles.header2}> {month} Goals </Text>
                 <View style={styles.header2Container}>
-                    <Text style={styles.header2}> {month} Goals </Text>
+                    <Text style={styles.text1}> Places to visit </Text>
                     <Button style={styles.button}
                         title="View All/Edit"
-                        onPress={() => props.navigation.navigate('MonthlyGoals',{'email':email}) }
+                        onPress={() => {
+                            let data = {
+                                email: email,
+                                category: 'D'
+                            }
+                            props.navigation.navigate('MonthlyGoals', { 'data': data })
+                        }}
                     />
-                    </View>
-                    <Text style={styles.text1}> Places to visit </Text>
-                
+                </View>
+
 
 
                 {
@@ -146,7 +151,19 @@ export function Dashboard(props) {
                         keyExtractor={(item, index) => index.toString()}
                     />
                 }
-                <Text style={styles.text1}> Restaurants to try </Text>
+              <View style={styles.header2Container}>
+                    <Text style={styles.text1}> Restaurants to try </Text>
+                    <Button style={styles.button}
+                        title="View All/Edit"
+                        onPress={() => {
+                            let data = {
+                                email: email,
+                                category: 'R'
+                            }
+                            props.navigation.navigate('MonthlyGoals', { 'data': data })
+                        }}
+                    />
+                </View>
                 {
                     restaurantsM &&
                     <FlatList
@@ -160,15 +177,22 @@ export function Dashboard(props) {
                         keyExtractor={(item, index) => index.toString()}
                     />
                 }
+                <Text style={styles.header2}> {year} Goals </Text>
+
+
                 <View style={styles.header2Container}>
-                    <Text style={styles.header2}> {year} Goals </Text>
+                    <Text style={styles.text1}> Places to visit </Text>
                     <Button style={styles.button}
                         title="View All/Edit"
-                        onPress={() =>  props.navigation.navigate('YearlyGoals',{'email':email})}
+                        onPress={() => {
+                            let data = {
+                                email: email,
+                                category: 'D'
+                            }
+                            props.navigation.navigate('YearlyGoals', { 'data': data })
+                        }}
                     />
-                    </View>
-
-                <Text style={styles.text1}> Places to visit </Text>
+                </View>
                 {
                     userdataY &&
                     <FlatList
@@ -182,7 +206,19 @@ export function Dashboard(props) {
                         keyExtractor={(item, index) => index.toString()}
                     />
                 }
-                <Text style={styles.text1}> Restaurants to try </Text>
+                <View style={styles.header2Container}>
+                    <Text style={styles.text1}> Restaurants to try </Text>
+                    <Button style={styles.button}
+                        title="View All/Edit"
+                        onPress={() => {
+                            let data = {
+                                email: email,
+                                category: 'R'
+                            }
+                            props.navigation.navigate('YearlyGoals', { 'data': data })
+                        }}
+                    />
+                </View>
                 {
                     restaurantsY &&
                     <FlatList
@@ -276,16 +312,16 @@ const styles = StyleSheet.create({
     },
 
     header2Container: {
-        flexDirection:"row",
+        flexDirection: "row",
         justifyContent: 'flex-start',
         color: 'gray',
         width: '80%',
         marginTop: 5,
-                
+
     },
 
     header2: {
-        flex:1,
+        flex: 1,
         lineHeight: 34,
         fontSize: 20,
         color: "white",
