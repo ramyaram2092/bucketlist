@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Button } from 'react-native';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Login } from './components/Login.js';
@@ -44,7 +46,14 @@ export default function App() {
         <Stack.Screen
           name="Dashboard"
           component={Dashboard}
-          options={{ title: 'My Bucket List' }}
+          options={{ title: 'My Bucket List' ,
+          headerRight: () => (
+            <Button
+              onPress={() => navigation.navigate('Signup')}
+              title="Logout"
+              color="#fff"
+            />
+          ),}}
         />
         {/* <Stack.Screen
           name="Destinations"

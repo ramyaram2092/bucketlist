@@ -22,39 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// export function Dashboard(props) {
-//     const [refreshing, setRefreshing] = React.useState(false);
-//     const [userData, setUserData] = React.useState(false);
-
-//     const loadUserData = () => {
-//         //call Firebaase
-//         //set data to userData
-//     }
-
-//     return (
-//         <View>
-//             <FlatList
-//                 renderItem={<Home/>}
-//                 refreshControl={
-//                     <RefreshControl refreshing={refreshing} onRefresh={loadUserData} />
-//                 }
-//             />
-//         </View>
-
-//     )
-// }
-
-
-
-// From kswagh@iu.edu to Everyone 08:50 PM
-// navigation.addListener('focus', () => {
-//       loadData();
-//       //Put your Data loading function here instead of my loadData()
-//     });
-
-
-
-export function Dashboard({route, navigation}) {
+export function Dashboard({ route, navigation }) {
     // use states
     const [month, setMonth] = useState()
     const [year, setYear] = useState()
@@ -69,11 +37,11 @@ export function Dashboard({route, navigation}) {
 
     //use effect
     useEffect(() => {
-        console.log("Focused status"+isFocused)
-      
+        console.log("Focused status" + isFocused)
+
 
         navigation.addListener('focus', () => {
-            if (month!=null && year!=null) updateGoals()
+            if (month != null && year != null) updateGoals()
             //Put your Data loading function here instead of my loadData()
         });
 
@@ -88,13 +56,13 @@ export function Dashboard({route, navigation}) {
     }, []);
 
     const updateGoals = async () => {
-            console.log("Coming here")
-            let udata = await getData("M", "D")
-            if (udata.length != 0)
-                setuserdataM([...udata])
-            let rdata = await getData("M", "R")
-            if (rdata.length != 0)
-                setrestaurantsM([...rdata])
+        console.log("Coming here")
+        let udata = await getData("M", "D")
+        if (udata.length != 0)
+            setuserdataM([...udata])
+        let rdata = await getData("M", "R")
+        if (rdata.length != 0)
+            setrestaurantsM([...rdata])
 
     }
 
@@ -109,7 +77,7 @@ export function Dashboard({route, navigation}) {
                 setrestaurantsM([...rdata])
 
         })()
-       
+
     }, [month]);
 
     useEffect(() => {
@@ -171,125 +139,135 @@ export function Dashboard({route, navigation}) {
     //UI render
     return (
         <SafeAreaView style={styles.container}>
-                {/* <Text>Pull down to see RefreshControl indicator</Text> */}
-                <View style={styles.home}>
-                    <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
-                        <Text style={styles.header1}> Hello {name} !! </Text>
-                        <Text style={styles.header1}> Welcome Back </Text>
+            {/* <Text>Pull down to see RefreshControl indicator</Text> */}
+            <View style={styles.home}>
+                <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
+                    <Text style={styles.header1}> Hello {name} !! </Text>
+                    <Text style={styles.header1}> Welcome Back </Text>
+                    <View style={styles.header2Container}>
                         <Text style={styles.header2}> {month} Goals </Text>
-                        <View style={styles.header2Container}>
-                            <Text style={styles.text1}> Places to visit </Text>
-                            <Button style={styles.button}
-                                title="View All/Edit"
-                                onPress={() => {
-                                    let data = {
-                                        email: email,
-                                        category: 'D'
-                                    }
-                                    navigation.navigate('MonthlyGoals', { 'data': data })
-                                }}
-                            />
-                        </View>
+                        <Button style={styles.button}
+                            title="Refresh"
+                            onPress={() => {
+                                
+                                updateGoals()
+                            }}
+                        />
+                    </View>
 
-
-
-                        {
-                            userdataM &&
-                            <FlatList
-                                contentContainerStyle={styles.flatlist}
-                                data={userdataM}
-                                renderItem={({ item }) =>
-                                    <GoalsPanel
-                                        {...item}
-                                    />
+                    <View style={styles.header2Container}>
+                        <Text style={styles.text1}> Places to visit </Text>
+                        <Button style={styles.button}
+                            title="View All/Edit"
+                            onPress={() => {
+                                let data = {
+                                    email: email,
+                                    category: 'D'
                                 }
-                                keyExtractor={(item, index) => index.toString()}
-                            />
-                        }
-                        <View style={styles.header2Container}>
-                            <Text style={styles.text1}> Restaurants to try </Text>
-                            <Button style={styles.button}
-                                title="View All/Edit"
-                                onPress={() => {
-                                    let data = {
-                                        email: email,
-                                        category: 'R'
-                                    }
-                                    navigation.navigate('MonthlyGoals', { 'data': data })
-                                }}
-                            />
-                        </View>
-                        {
-                            restaurantsM &&
-                            <FlatList
-                                contentContainerStyle={styles.flatlist}
-                                data={restaurantsM}
-                                renderItem={({ item }) =>
-                                    <GoalsPanel
-                                        {...item}
-                                    />
-                                }
-                                keyExtractor={(item, index) => index.toString()}
-                            />
-                        }
-                        <Text style={styles.header2}> {year} Goals </Text>
+                                navigation.navigate('MonthlyGoals', { 'data': data })
+                            }}
+                        />
+                    </View>
 
 
-                        <View style={styles.header2Container}>
-                            <Text style={styles.text1}> Places to visit </Text>
-                            <Button style={styles.button}
-                                title="View All/Edit"
-                                onPress={() => {
-                                    let data = {
-                                        email: email,
-                                        category: 'D'
-                                    }
-                                    navigation.navigate('YearlyGoals', { 'data': data })
-                                }}
-                            />
-                        </View>
-                        {
-                            userdataY &&
-                            <FlatList
-                                contentContainerStyle={styles.flatlist}
-                                data={userdataY}
-                                renderItem={({ item }) =>
-                                    <GoalsPanel
-                                        {...item}
-                                    />
-                                }
-                                keyExtractor={(item, index) => index.toString()}
-                            />
-                        }
-                        <View style={styles.header2Container}>
-                            <Text style={styles.text1}> Restaurants to try </Text>
-                            <Button style={styles.button}
-                                title="View All/Edit"
-                                onPress={() => {
-                                    let data = {
-                                        email: email,
-                                        category: 'R'
-                                    }
-                                    navigation.navigate('YearlyGoals', { 'data': data })
-                                }}
-                            />
-                        </View>
-                        {
-                            restaurantsY &&
-                            <FlatList
-                                contentContainerStyle={styles.flatlist}
-                                data={restaurantsY}
-                                renderItem={({ item }) =>
-                                    <GoalsPanel
-                                        {...item}
-                                    />
-                                }
-                                keyExtractor={(item, index) => index.toString()}
-                            />
-                        }
 
-                    </ImageBackground>
-                </View>
+                    {
+                        userdataM &&
+                        <FlatList
+                            contentContainerStyle={styles.flatlist}
+                            data={userdataM}
+                            renderItem={({ item }) =>
+                                <GoalsPanel
+                                    {...item}
+                                />
+                            }
+                            keyExtractor={(item, index) => index.toString()}
+                        />
+                    }
+                    <View style={styles.header2Container}>
+                        <Text style={styles.text1}> Restaurants to try </Text>
+                        <Button style={styles.button}
+                            title="View All/Edit"
+                            onPress={() => {
+                                let data = {
+                                    email: email,
+                                    category: 'R'
+                                }
+                                navigation.navigate('MonthlyGoals', { 'data': data })
+                            }}
+                        />
+                    </View>
+                    {
+                        restaurantsM &&
+                        <FlatList
+                            contentContainerStyle={styles.flatlist}
+                            data={restaurantsM}
+                            renderItem={({ item }) =>
+                                <GoalsPanel
+                                    {...item}
+                                />
+                            }
+                            keyExtractor={(item, index) => index.toString()}
+                        />
+                    }
+                    <Text style={styles.header2}> {year} Goals </Text>
+
+
+                    <View style={styles.header2Container}>
+                        <Text style={styles.text1}> Places to visit </Text>
+                        <Button style={styles.button}
+                            title="View All/Edit"
+                            onPress={() => {
+                                let data = {
+                                    email: email,
+                                    category: 'D'
+                                }
+                                navigation.navigate('YearlyGoals', { 'data': data })
+                            }}
+                        />
+                    </View>
+                    {
+                        userdataY &&
+                        <FlatList
+                            contentContainerStyle={styles.flatlist}
+                            data={userdataY}
+                            renderItem={({ item }) =>
+                                <GoalsPanel
+                                    {...item}
+                                />
+                            }
+                            keyExtractor={(item, index) => index.toString()}
+                        />
+                    }
+                    <View style={styles.header2Container}>
+                        <Text style={styles.text1}> Restaurants to try </Text>
+                        <Button style={styles.button}
+                            title="View All/Edit"
+                            onPress={() => {
+                                let data = {
+                                    email: email,
+                                    category: 'R'
+                                }
+                                navigation.navigate('YearlyGoals', { 'data': data })
+                            }}
+                        />
+                    </View>
+                    {
+                        restaurantsY &&
+                        <FlatList
+                            contentContainerStyle={styles.flatlist}
+                            data={restaurantsY}
+                            renderItem={({ item }) =>
+                                <GoalsPanel
+                                    {...item}
+                                />
+                            }
+                            keyExtractor={(item, index) => index.toString()}
+                        />
+                    }
+
+                </ImageBackground>
+            </View>
         </SafeAreaView>
     )
 
@@ -363,8 +341,8 @@ const styles = StyleSheet.create({
 
     },
     header1: {
-        lineHeight: 34,
-        fontSize: 25,
+        lineHeight: 30,
+        fontSize: 22,
         color: "white",
         fontWeight: 'bold',
         justifyContent: "center",
@@ -385,7 +363,7 @@ const styles = StyleSheet.create({
     header2: {
         flex: 1,
         lineHeight: 34,
-        fontSize: 20,
+        fontSize: 18,
         color: "white",
         fontWeight: 'bold',
     },
