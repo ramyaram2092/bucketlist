@@ -1,6 +1,7 @@
 
-import { StyleSheet, Text, View, ImageBackground, Button, FlatList, Linking } from 'react-native';
+import { RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View, ImageBackground, Button, FlatList, Linking } from 'react-native';
 import homepic from '../assets/home_2.jpg'
+import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
@@ -21,7 +22,39 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export function Dashboard(props) {
+// export function Dashboard(props) {
+//     const [refreshing, setRefreshing] = React.useState(false);
+//     const [userData, setUserData] = React.useState(false);
+
+//     const loadUserData = () => {
+//         //call Firebaase
+//         //set data to userData
+//     }
+
+//     return (
+//         <View>
+//             <FlatList
+//                 renderItem={<Home/>}
+//                 refreshControl={
+//                     <RefreshControl refreshing={refreshing} onRefresh={loadUserData} />
+//                 }
+//             />
+//         </View>
+
+//     )
+// }
+
+
+
+// From kswagh@iu.edu to Everyone 08:50 PM
+// navigation.addListener('focus', () => {
+//       loadData();
+//       //Put your Data loading function here instead of my loadData()
+//     });
+
+
+
+export function Dashboard({route, navigation}) {
     // use states
     const [month, setMonth] = useState()
     const [year, setYear] = useState()
@@ -32,13 +65,20 @@ export function Dashboard(props) {
     const [userdataY, setuserdataY] = useState([])
     const [restaurantsM, setrestaurantsM] = useState([])
     const [restaurantsY, setrestaurantsY] = useState([])
-
-
+    const isFocused = useIsFocused()
 
     //use effect
     useEffect(() => {
-        setemail(props.route.params.user.email)
-        setname(props.route.params.user.name)
+        console.log("Focused status"+isFocused)
+      
+
+        navigation.addListener('focus', () => {
+            if (month!=null && year!=null) updateGoals()
+            //Put your Data loading function here instead of my loadData()
+        });
+
+        setemail(route.params.user.email)
+        setname(route.params.user.name)
         console.log("************" + email + "***********" + name)
         const d = new Date();
         let m = d.getMonth() + 1;
@@ -46,6 +86,18 @@ export function Dashboard(props) {
         setMonth(checkMonthName(m))
         setYear(y)
     }, []);
+
+    const updateGoals = async () => {
+            console.log("Coming here")
+            let udata = await getData("M", "D")
+            if (udata.length != 0)
+                setuserdataM([...udata])
+            let rdata = await getData("M", "R")
+            if (rdata.length != 0)
+                setrestaurantsM([...rdata])
+
+    }
+
 
     useEffect(() => {
         (async () => {
@@ -57,6 +109,7 @@ export function Dashboard(props) {
                 setrestaurantsM([...rdata])
 
         })()
+       
     }, [month]);
 
     useEffect(() => {
@@ -117,128 +170,134 @@ export function Dashboard(props) {
 
     //UI render
     return (
-        <View style={styles.home}>
-            <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
-                <Text style={styles.header1}> Hello {name} !! </Text>
-                <Text style={styles.header1}> Welcome Back </Text>
-                <Text style={styles.header2}> {month} Goals </Text>
-                <View style={styles.header2Container}>
-                    <Text style={styles.text1}> Places to visit </Text>
-                    <Button style={styles.button}
-                        title="View All/Edit"
-                        onPress={() => {
-                            let data = {
-                                email: email,
-                                category: 'D'
-                            }
-                            props.navigation.navigate('MonthlyGoals', { 'data': data })
-                        }}
-                    />
-                </View>
+        <SafeAreaView style={styles.container}>
+                {/* <Text>Pull down to see RefreshControl indicator</Text> */}
+                <View style={styles.home}>
+                    <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
+                        <Text style={styles.header1}> Hello {name} !! </Text>
+                        <Text style={styles.header1}> Welcome Back </Text>
+                        <Text style={styles.header2}> {month} Goals </Text>
+                        <View style={styles.header2Container}>
+                            <Text style={styles.text1}> Places to visit </Text>
+                            <Button style={styles.button}
+                                title="View All/Edit"
+                                onPress={() => {
+                                    let data = {
+                                        email: email,
+                                        category: 'D'
+                                    }
+                                    navigation.navigate('MonthlyGoals', { 'data': data })
+                                }}
+                            />
+                        </View>
 
 
 
-                {
-                    userdataM &&
-                    <FlatList
-                        contentContainerStyle={styles.flatlist}
-                        data={userdataM}
-                        renderItem={({ item }) =>
-                            <GoalsPanel
-                                {...item}
+                        {
+                            userdataM &&
+                            <FlatList
+                                contentContainerStyle={styles.flatlist}
+                                data={userdataM}
+                                renderItem={({ item }) =>
+                                    <GoalsPanel
+                                        {...item}
+                                    />
+                                }
+                                keyExtractor={(item, index) => index.toString()}
                             />
                         }
-                        keyExtractor={(item, index) => index.toString()}
-                    />
-                }
-              <View style={styles.header2Container}>
-                    <Text style={styles.text1}> Restaurants to try </Text>
-                    <Button style={styles.button}
-                        title="View All/Edit"
-                        onPress={() => {
-                            let data = {
-                                email: email,
-                                category: 'R'
-                            }
-                            props.navigation.navigate('MonthlyGoals', { 'data': data })
-                        }}
-                    />
-                </View>
-                {
-                    restaurantsM &&
-                    <FlatList
-                        contentContainerStyle={styles.flatlist}
-                        data={restaurantsM}
-                        renderItem={({ item }) =>
-                            <GoalsPanel
-                                {...item}
+                        <View style={styles.header2Container}>
+                            <Text style={styles.text1}> Restaurants to try </Text>
+                            <Button style={styles.button}
+                                title="View All/Edit"
+                                onPress={() => {
+                                    let data = {
+                                        email: email,
+                                        category: 'R'
+                                    }
+                                    navigation.navigate('MonthlyGoals', { 'data': data })
+                                }}
+                            />
+                        </View>
+                        {
+                            restaurantsM &&
+                            <FlatList
+                                contentContainerStyle={styles.flatlist}
+                                data={restaurantsM}
+                                renderItem={({ item }) =>
+                                    <GoalsPanel
+                                        {...item}
+                                    />
+                                }
+                                keyExtractor={(item, index) => index.toString()}
                             />
                         }
-                        keyExtractor={(item, index) => index.toString()}
-                    />
-                }
-                <Text style={styles.header2}> {year} Goals </Text>
+                        <Text style={styles.header2}> {year} Goals </Text>
 
 
-                <View style={styles.header2Container}>
-                    <Text style={styles.text1}> Places to visit </Text>
-                    <Button style={styles.button}
-                        title="View All/Edit"
-                        onPress={() => {
-                            let data = {
-                                email: email,
-                                category: 'D'
-                            }
-                            props.navigation.navigate('YearlyGoals', { 'data': data })
-                        }}
-                    />
-                </View>
-                {
-                    userdataY &&
-                    <FlatList
-                        contentContainerStyle={styles.flatlist}
-                        data={userdataY}
-                        renderItem={({ item }) =>
-                            <GoalsPanel
-                                {...item}
+                        <View style={styles.header2Container}>
+                            <Text style={styles.text1}> Places to visit </Text>
+                            <Button style={styles.button}
+                                title="View All/Edit"
+                                onPress={() => {
+                                    let data = {
+                                        email: email,
+                                        category: 'D'
+                                    }
+                                    navigation.navigate('YearlyGoals', { 'data': data })
+                                }}
+                            />
+                        </View>
+                        {
+                            userdataY &&
+                            <FlatList
+                                contentContainerStyle={styles.flatlist}
+                                data={userdataY}
+                                renderItem={({ item }) =>
+                                    <GoalsPanel
+                                        {...item}
+                                    />
+                                }
+                                keyExtractor={(item, index) => index.toString()}
                             />
                         }
-                        keyExtractor={(item, index) => index.toString()}
-                    />
-                }
-                <View style={styles.header2Container}>
-                    <Text style={styles.text1}> Restaurants to try </Text>
-                    <Button style={styles.button}
-                        title="View All/Edit"
-                        onPress={() => {
-                            let data = {
-                                email: email,
-                                category: 'R'
-                            }
-                            props.navigation.navigate('YearlyGoals', { 'data': data })
-                        }}
-                    />
-                </View>
-                {
-                    restaurantsY &&
-                    <FlatList
-                        contentContainerStyle={styles.flatlist}
-                        data={restaurantsY}
-                        renderItem={({ item }) =>
-                            <GoalsPanel
-                                {...item}
+                        <View style={styles.header2Container}>
+                            <Text style={styles.text1}> Restaurants to try </Text>
+                            <Button style={styles.button}
+                                title="View All/Edit"
+                                onPress={() => {
+                                    let data = {
+                                        email: email,
+                                        category: 'R'
+                                    }
+                                    navigation.navigate('YearlyGoals', { 'data': data })
+                                }}
+                            />
+                        </View>
+                        {
+                            restaurantsY &&
+                            <FlatList
+                                contentContainerStyle={styles.flatlist}
+                                data={restaurantsY}
+                                renderItem={({ item }) =>
+                                    <GoalsPanel
+                                        {...item}
+                                    />
+                                }
+                                keyExtractor={(item, index) => index.toString()}
                             />
                         }
-                        keyExtractor={(item, index) => index.toString()}
-                    />
-                }
 
-            </ImageBackground>
-        </View>
-
+                    </ImageBackground>
+                </View>
+        </SafeAreaView>
     )
 
 }
+
+
+
+
 
 
 function GoalsPanel(props) {
@@ -261,6 +320,9 @@ function Display(props) {
 
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
     image: {
         flex: 1,
         // justifyContent: "center",
