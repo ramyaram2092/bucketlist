@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer,useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Login } from './components/Login.js';
 import { Signup } from './components/Signup.js';
@@ -12,7 +12,7 @@ import { YearlyGoals } from './components/YearlyGoals.js'
 
 
 const Stack = createNativeStackNavigator();
-
+// const navigation=useNavigation()
 export default function App() {
   return (
     <NavigationContainer>
@@ -49,7 +49,7 @@ export default function App() {
           options={{ title: 'My Bucket List' ,
           headerRight: () => (
             <Button
-              onPress={() => navigation.navigate('Signup')}
+              onPress={() => {} }
               title="Logout"
               color="#fff"
             />
@@ -82,7 +82,14 @@ export default function App() {
           component={MonthlyGoals}
           options={{
             title: 'My Monthly Goals',
-            headerLeft: null
+            headerLeft: null,
+            headerRight: () => (
+              <Button
+                onPress={() => {}}
+                title="Logout"
+                color="#fff"
+              />
+            ),
           }}
 
         />
@@ -91,7 +98,14 @@ export default function App() {
           component={YearlyGoals}
           options={{
             title: 'My Yearly Goals',
-            headerLeft: null
+            headerLeft: null,
+            headerRight: () => (
+              <Button
+                onPress={() => {}}
+                title="Logout"
+                color="#fff"
+              />
+            ),
           }
           }
         />
