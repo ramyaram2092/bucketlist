@@ -142,23 +142,21 @@ export function Dashboard({ route, navigation }) {
             {/* <Text>Pull down to see RefreshControl indicator</Text> */}
             <View style={styles.home}>
                 <ImageBackground source={homepic} resizeMode="cover" style={styles.image}>
-                    <Text style={styles.header1}> Hello {name} !! </Text>
-                    <Text style={styles.header1}> Welcome Back </Text>
-                    <View style={styles.header2Container}>
+                    <Text style={styles.header1}> Welcome Back {name} </Text>
+                    <View style={styles.header1Container}>
                         <Text style={styles.header2}> {month} Goals </Text>
-                        <Button style={styles.button}
+                        <Button style={styles.headerbutton}
                             title="Refresh"
                             onPress={() => {
-                                
                                 updateGoals()
                             }}
                         />
                     </View>
 
                     <View style={styles.header2Container}>
-                        <Text style={styles.text1}> Places to visit </Text>
-                        <Button style={styles.button}
-                            title="View All/Edit"
+                        <Text style={styles.header2}> Places to visit </Text>
+                        <Button style={styles.headerbutton}
+                            title="view/edit"
                             onPress={() => {
                                 let data = {
                                     email: email,
@@ -185,9 +183,9 @@ export function Dashboard({ route, navigation }) {
                         />
                     }
                     <View style={styles.header2Container}>
-                        <Text style={styles.text1}> Restaurants to try </Text>
-                        <Button style={styles.button}
-                            title="View All/Edit"
+                        <Text style={styles.header2}> Restaurants to try </Text>
+                        <Button style={styles.headerbutton}
+                            title="view/edit"
                             onPress={() => {
                                 let data = {
                                     email: email,
@@ -214,8 +212,8 @@ export function Dashboard({ route, navigation }) {
 
 
                     <View style={styles.header2Container}>
-                        <Text style={styles.text1}> Places to visit </Text>
-                        <Button style={styles.button}
+                        <Text style={styles.header2}> Places to visit </Text>
+                        <Button style={styles.headerbutton}
                             title="View All/Edit"
                             onPress={() => {
                                 let data = {
@@ -240,8 +238,8 @@ export function Dashboard({ route, navigation }) {
                         />
                     }
                     <View style={styles.header2Container}>
-                        <Text style={styles.text1}> Restaurants to try </Text>
-                        <Button style={styles.button}
+                        <Text style={styles.header2}> Restaurants to try </Text>
+                        <Button style={styles.headerbutton}
                             title="View All/Edit"
                             onPress={() => {
                                 let data = {
@@ -344,7 +342,7 @@ const styles = StyleSheet.create({
         lineHeight: 30,
         fontSize: 22,
         color: "white",
-        fontWeight: 'bold',
+        // fontWeight: 'bold',
         justifyContent: "center",
         textAlign: "center",
 
@@ -353,10 +351,22 @@ const styles = StyleSheet.create({
 
     header2Container: {
         flexDirection: "row",
-        justifyContent: 'flex-start',
+        justifyContent: 'flex-end',
         color: 'gray',
-        width: '80%',
+        width: '100%',
         marginTop: 5,
+
+    },
+    header1Container: {
+        flexDirection: "row",
+        justifyContent: 'flex-end',
+        color: 'gray',
+        width: '100%',
+        marginTop: 5,
+
+    },
+    headerbutton: {
+        justifyContent: "end"
 
     },
 
