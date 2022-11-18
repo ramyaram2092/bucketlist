@@ -154,7 +154,7 @@ export function Dashboard({ route, navigation }) {
                     </View>
 
                     <View style={styles.header2Container}>
-                        <Text style={styles.header2}> Places to visit </Text>
+                        <Text style={styles.header3}> Places to visit </Text>
                         <Button style={styles.headerbutton}
                             title="view/edit"
                             onPress={() => {
@@ -183,7 +183,7 @@ export function Dashboard({ route, navigation }) {
                         />
                     }
                     <View style={styles.header2Container}>
-                        <Text style={styles.header2}> Restaurants to try </Text>
+                        <Text style={styles.header3}> Restaurants to try </Text>
                         <Button style={styles.headerbutton}
                             title="view/edit"
                             onPress={() => {
@@ -208,11 +208,11 @@ export function Dashboard({ route, navigation }) {
                             keyExtractor={(item, index) => index.toString()}
                         />
                     }
-                    <Text style={styles.header2}> {year} Goals </Text>
-
-
+                    <View style={styles.header1Container}>
+                        <Text style={styles.header2}> {year} Goals </Text>
+                    </View>
                     <View style={styles.header2Container}>
-                        <Text style={styles.header2}> Places to visit </Text>
+                        <Text style={styles.header3}> Places to visit </Text>
                         <Button style={styles.headerbutton}
                             title="View All/Edit"
                             onPress={() => {
@@ -238,7 +238,7 @@ export function Dashboard({ route, navigation }) {
                         />
                     }
                     <View style={styles.header2Container}>
-                        <Text style={styles.header2}> Restaurants to try </Text>
+                        <Text style={styles.header3}> Restaurants to try </Text>
                         <Button style={styles.headerbutton}
                             title="View All/Edit"
                             onPress={() => {
@@ -340,18 +340,18 @@ const styles = StyleSheet.create({
     },
     header1: {
         lineHeight: 30,
-        fontSize: 22,
+        fontSize: 25,
         color: "white",
-        // fontWeight: 'bold',
+        fontWeight: 'bold',
         justifyContent: "center",
         textAlign: "center",
-
-
+        textDecorationLine: 'Underline'
     },
 
     header2Container: {
         flexDirection: "row",
         justifyContent: 'flex-end',
+        fontSize: 20,
         color: 'gray',
         width: '100%',
         marginTop: 5,
@@ -366,14 +366,23 @@ const styles = StyleSheet.create({
 
     },
     headerbutton: {
-        justifyContent: "end"
+        justifyContent: "end",
+        height: 10,
 
     },
 
     header2: {
         flex: 1,
         lineHeight: 34,
-        fontSize: 18,
+        fontSize: 20,
+        color: "white",
+        fontWeight: 'bold',
+    },
+
+    header3: {
+        flex: 1,
+        lineHeight: 34,
+        fontSize: 17,
         color: "white",
         fontWeight: 'bold',
     },
